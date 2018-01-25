@@ -1,0 +1,25 @@
+<import src="../../../common/head.wxml" />
+<import src="../../../common/foot.wxml" />
+
+<view class="container">
+  <template is="head" data="{{title: '绑定设备'}}"/>  
+
+  <view class="page-body"> 
+    <view class="weui-cells__desc">
+      <view class="weui-cells__title">1：打开心电工作站，调试出二维码</view>
+      <view class="weui-cells__title">2：点击下面的"扫一扫"按钮，对准二维码</view>
+      <view class="weui-cells__title">3：完成绑定</view>
+    </view>    
+    <view class="weui-cells__title">扫码结果</view>
+    <view class="weui-cells weui-cells_after-title">
+      <view class="weui-cell">
+        <view class="weui-cell__bd">{{sn?"序列号："+sn:""}}</view>
+      </view>
+    </view>
+    <view class="btn-area">
+      <button type="primary" bindtap="scanCode">扫一扫</button>
+    </view>
+  </view>
+
+  <template is="foot" />
+</view>

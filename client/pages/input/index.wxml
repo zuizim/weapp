@@ -1,0 +1,63 @@
+<view class="index">
+  <view class="index-hd">
+    <image class="index-logo" src="resources/kind/logo.png"></image>
+    <form catchsubmit="formSubmit" catchreset="formReset">
+    <view class="index-desc"> 第1步：根据sn号选择要操作的设备 </view>
+    <view class="{{equipments.length==0?'index-desc warning':'hide'}}">
+      检测到您尚未绑定心电工作站
+      <navigator url="/pages/equipment/pages/bind/bind?title=navigate" hover-class="navigator-hover">
+        点击这里去绑定设备
+      </navigator>
+    </view>
+    <view class="{{(equipments.length>0 && onlineEquipments.length==0)?'index-desc warning':'hide'}}">
+      检测到绑定过设备，但没有设备在线
+      <navigator url="/pages/equipment/pages/bind/bind?title=navigate" hover-class="navigator-hover">
+        点击这里去绑定新设备
+      </navigator>
+    </view>
+    <radio-group class="radio-group" bindchange="radioChange" name="snCode">
+      <view wx:for="{{onlineEquipments}}" wx:for-item="equipment" wx:key="{{equipment.sn_code}}" class="weui-cell weui-cell_input">
+        <label class="radio weui-cell__bd {{equipment.isOnline=='online'?' online':''}}">
+          <radio value="{{equipment.sn_code}}" checked="{{isOnly}}"/>
+          {{equipment.sn_code}}：{{equipment.nick_name?equipment.nick_name:"尚未设置别名"}}
+        </label>
+      </view>
+    </radio-group>    
+    <view class="index-desc"> 第2步：录入病人信息 </view>    
+      <view class="{{sn?'showed':'hide'}}">
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__bd">
+         <input class="weui-input" type="text" name="name" placeholder="姓名" />
+        </view>
+      </view>
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__bd">
+         <input class="weui-input" type="number" name="age" placeholder="年龄" />
+        </view>
+      </view>
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__bd">
+         <input class="weui-input" type="text" name="code" placeholder="病人编号" />
+        </view>
+      </view>
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__bd">
+         <input class="weui-input {{isPhoneValid}}" type="number" name="phone" placeholder="手机号" bindinput="checkPhoneValid" />
+        </view>
+      </view>      
+      <view class="weui-cell weui-cell_input">        
+      </view>
+      <view class="page-section page-section-gap">        
+        <radio-group name="gender">
+          <label><radio value="0"/>男 </label>
+          <label> <radio value="1"/>女</label>
+        </radio-group>
+      </view>
+      <view class="btn-area">
+        <button type="primary" formType="submit" disabled="{{!sn}}">设置病人信息</button>
+        <button type="warn" formType="reset">重置</button>
+      </view>
+      </view>
+    </form>
+  </view>
+</view>

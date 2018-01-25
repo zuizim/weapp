@@ -1,0 +1,72 @@
+@import "../common/index.wxss";
+
+.avatar{
+  width: 120rpx;
+  height: 120rpx;
+  border: 2rpx solid #ccc;
+  border-radius: 50%;
+}
+
+.center{
+  text-align: center;
+}
+
+.root {
+    background: #efeff4;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom:0;
+}
+
+.user_info{
+  padding-top: 60rpx;
+  padding-bottom: 40rpx;
+  border-bottom: 2rpx solid #fff;
+}
+
+input,textarea{
+  background: #fff;
+  margin: 40rpx 70rpx;
+  border: 2rpx solid #ffd;
+  border-radius: 6rpx;
+  height: 66rpx;
+  line-height: 33px;
+}
+
+textarea{
+  padding: 20rpx 0;
+}
+
+.wrong input{
+  border: 2rpx solid #f66;
+}
+
+.hide{  
+  display: none;
+}
+
+button.verifyCode{
+  font-size: 28rpx;   
+  margin: 40rpx 70rpx;
+}
+
+input.valid{
+  border: 2rpx solid #0B0;
+}
+
+input.valid::after{
+  content:""
+}
+
+input.invalid{
+  border: 2rpx solid #f66;
+}
+
+icon.right{
+  float: right;  
+  margin-top: 14rpx;
+  padding-right: 20rpx;
+}
+

@@ -1,0 +1,40 @@
+<import src="../../../common/head.wxml" />
+<import src="../../../common/foot.wxml" />
+
+<view class="container">
+  <template is="head" data="{{title: '解除绑定'}}"/>
+
+  <view class="page-body">  
+
+  <view class="page-body">    
+    <form catchsubmit="formSubmit" catchreset="formReset">
+      <view class="page-section">  
+        <view class="weui-cells__desc">
+        <!--
+          <view class="weui-cells__title">第2种</view>
+        !-->
+          <view class="weui-cells__title">勾选设备序列号进行解绑</view>
+          <checkbox-group name="checkbox">
+            <view class="weui-cells__title" >
+              <label class="{{equipments==''?'text-warning':'hide'}}">暂无设备</label>
+            </view>
+            <view class="weui-cells__title left" wx:for="{{equipments}}" wx:for-item="equipment" wx:key="equipment.sn_code">
+              <label class="{{equipment.isOnline=='online'?'online':''}}">
+              <checkbox value="{{equipment.sn_code}}"/>
+              {{equipment.sn_code}}：
+              <span class="{{equipment.nick_name?'':'text-warning'}}">{{equipment.nick_name?equipment.nick_name:'未设置别名'}}</span>
+              </label>
+            </view>            
+          </checkbox-group>          
+        </view>      
+      <view class="btn-area">
+        <button type="primary" formType="submit">解除绑定</button>        
+      </view>
+      </view>
+    </form>
+
+  </view>
+  </view>
+
+  <template is="foot" />
+</view>

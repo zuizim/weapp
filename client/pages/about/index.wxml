@@ -1,0 +1,47 @@
+<view class="root">  
+          
+  <view class="user_info">
+    <view class="center">
+      <image class="avatar" alt="用户" src="{{userInfo.avatarUrl}}"></image>
+    </view>
+    <view class="center">{{userInfo.nickName}}</view>
+    <hr />
+  </view>
+  
+  <view class="user_info">
+  <form catchsubmit="formSubmit">
+    <view class="center">{{isRegistered?"以下是您的基本信息":"请完善您的信息，用于安全验证"}}</view>
+    <view  class="{{isRegistered?'hide':''}}">
+      <span class="{{inviteCode.length>4?'':'hide'}}"><icon type="{{inviteCode=='wrong'?'':'success'}}" class="right" size="20"></icon></span>      
+      <input type="text" class="center" placeholder="邀请码(必填)" name="invitecode" value="{{userInfo.inviteCode}}" bindinput="setInviteCode" />
+    </view>
+    <view>
+      <input type="text" class="center" placeholder="姓名(必填)" name="fullname" value="{{userInfo.fullName}}"/>
+    </view>
+    <view class="{{phoneNumber=='wrong'?'wrong':''}}">
+      <input type="number" class="center {{isRegistered?' disabled':''}}" placeholder="手机号码(必填)" name="phone" disabled="{{isRegistered}}" bindinput="setPhoneNumber" value="{{userInfo.userPhone}}"/>      
+    </view>
+    <view class="{{isRegistered?'hide':''}}">
+      <button type="primary" class="verifyCode" bindtap="sendSmsCode" disabled="{{phoneNumber.length!=11 || validSeconds>0}}">
+      {{validSeconds>0?"验证码已发送":"获取验证码"}}
+      <span class="{{validSeconds<1?'hide':''}}"> ( {{validSeconds}}s )</span>
+      </button>
+    </view>
+    <view class="{{isRegistered?'hide':''}}">
+      <span class="{{isCodeValid.length>4?'':'hide'}}"><icon type="{{isCodeValid=='valid'?'success':''}}" class="right" size="20"></icon></span>      
+      <input type="number" placeholder="验证码" class="center verifyCode {{isCodeValid}}" name="code" bindinput="checkVerifyCode" value="{{verifyCode}}"/>      
+    </view>
+    <view>
+      <input type="text" class="center" placeholder="邮箱(选填)" name="email" value="{{userInfo.email}}"/>      
+    </view>
+    <view>
+      <input type="text" class="center" placeholder="医院名称(选填)" name="hospital" value="{{userInfo.hospitalID}}"/>      
+    </view>    
+    <view class="btn-area">
+      <button type="primary" formType="submit">{{isRegistered?'修 改':'提 交'}}</button>
+    </view>
+  </form>
+  </view>  
+
+    
+</view>

@@ -1,0 +1,58 @@
+{
+    "pages": [        
+        "pages/equipment/index",
+        "pages/report/index",        
+        "pages/equipment/pages/bind/bind",
+        "pages/equipment/pages/unbind/unbind",
+        "pages/equipment/pages/list/list",
+        "pages/input/index",        
+        "pages/about/index"        
+    ],
+    "window": {
+        "navigationBarTextStyle": "white",
+        "navigationBarTitleText": "心电工作站助手",
+        "navigationBarBackgroundColor": "#69f",
+        "backgroundColor": "#69f",
+        "enablePullDownRefresh": "true"
+    },
+    "tabBar": {
+      "color": "#7A7E83",
+      "selectedColor": "#3cc51f",
+      "borderStyle": "black",
+      "backgroundColor": "#ffffff",
+      "list": [
+        {
+          "pagePath": "pages/equipment/index",
+          "iconPath": "image/equipment.png",
+          "selectedIconPath": "image/equipment_HL.png",
+          "text": "设备"
+        },
+        {
+          "pagePath": "pages/input/index",
+          "iconPath": "image/edit.png",
+          "selectedIconPath": "image/edit_HL.png",
+          "text": "录入"
+        },
+        {
+          "pagePath": "pages/report/index",
+          "iconPath": "image/list.png",
+          "selectedIconPath": "image/list_HL.png",
+          "text": "报告"
+        },
+        {
+          "pagePath": "pages/about/index",
+          "iconPath": "image/about.png",
+          "selectedIconPath": "image/about_HL.png",
+          "text": "关于"
+        }
+      ]
+    },
+    "networkTimeout": {
+      "request": 10000,
+      "connectSocket": 10000,
+      "uploadFile": 10000,
+      "downloadFile": 10000
+    },
+    "debug": false
+  
+}

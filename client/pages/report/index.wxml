@@ -1,0 +1,30 @@
+<view class="index">
+  <view class="index-hd">
+    <image class="index-logo" src="resources/kind/logo.png"></image>
+    <view class="index-desc"> 查看检测报告 </view>
+    <form catchsubmit="formSubmit" catchreset="formReset">
+      <view class="weui-cell__bd">以下是最新生成的20份报告</view>      
+      <view class="weui-cell__bd">{{url}}</view>
+      <view class="weui-cell__bd">
+        <view class="patient_name">
+          <input type="text" placeholder="可输入病人姓名进行查找" bindinput="bindPatientName" bindconfirm="searchFromServer"/>
+        </view>
+      </view>      
+      <view class="weui-cell weui-cell_input">
+        <view class="weui-cell__bd">
+            <label>编号 病人姓名 报告日期 预览</label>               
+        </view>
+      </view>
+      <view wx:for="{{reports}}" wx:for-item="report" wx:key="report.username"  class="weui-cell weui-cell_input {{report.excluded?'hidden':''}}">
+        <view class="weui-cell__bd report_list">
+            <label class="float-left">
+            {{index+1}}. 
+            <span bindtap="getPDFReport" data-value="{{report.ReportToken}}">{{report.PatientName}}</span>
+            <span class="time">{{report.RecordTime}}</span>
+            </label>
+            <button class="float-right view-button" bindtap="checkReport" data-value="{{report.ReportToken}}">报告</button> 
+        </view>        
+      </view>      
+    </form>    
+  </view>
+</view>

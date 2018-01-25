@@ -1,0 +1,33 @@
+<import src="../../../common/head.wxml" />
+<import src="../../../common/foot.wxml" />
+
+<view class="container">
+  <template is="head" data="{{title: '设备列表'}}"/>
+
+  <view class="page-body">    
+    <form catchsubmit="formSubmit" catchreset="formReset">
+      <view class="page-section">  
+        <view class="weui-cells__desc">         
+          <view class="weui-cells__title">以下是已经绑定的设备列表 (可设置别名)：</view>         
+          <checkbox-group name="checkbox" bindchange="checkboxChange">
+            <view class="weui-cells__title" >
+              <label class="{{equipments==''?'text-warning':'hide'}}">暂无设备</label>
+            </view>
+            <view class="weui-cells__title" wx:for="{{equipments}}" wx:for-item="equipment" wx:key="equipment.sn_code">
+              <label class="{{equipment.isOnline=='online'?'online':''}}">
+                <checkbox value="{{equipment.sn_code}}" checked="{{equipment.checked}}" />
+                {{equipment.sn_code}}
+              </label>
+              <input class="{{equipment.checked?'float-right':'float-right disabled'}} {{equipment.nick_name?'':'border-warning'}}" id="{{equipment.sn_code}}" type="text" placeholder="设置别名" value="{{equipment.nick_name}}" bindinput="bindNicknameInput" disabled="{{!equipment.checked}}"/>
+            </view>
+          </checkbox-group>
+        </view>       
+      </view>
+      <view class="btn-area">
+        <button type="primary" formType="submit">提交别名</button>        
+      </view>      
+    </form>
+  </view>
+
+  <template is="foot" />
+</view>

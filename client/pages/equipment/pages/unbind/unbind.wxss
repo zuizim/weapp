@@ -1,0 +1,15 @@
+@import "../../../common/lib/weui.wxss";
+
+.weui-cell__bd{
+  min-height: 48rpx;
+  word-break: break-all;
+}
+
+.weui-cells__desc view{
+  text-align: center;
+}
+
+.weui-cells__desc .left{
+  text-align: left;
+  padding-left: 170rpx;
+}

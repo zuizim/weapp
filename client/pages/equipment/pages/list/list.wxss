@@ -1,0 +1,36 @@
+@import "../../../common/lib/weui.wxss";
+
+label {
+  display: inline-block;
+  min-width: 270rpx;
+  margin-right: 20rpx;
+}
+form{
+  width: 100%;
+}
+.picker-text {
+  margin-left: 20rpx;
+  position: relative;
+}
+
+input.float-right{
+  float: right;
+  font-size: 24rpx;
+  border: 2rpx solid #ddd;  
+  text-align: center;
+}
+
+.weui-cells__title{
+  height: 60rpx;
+  line-height: 60rpx;
+}
+
+.disabled{
+  background: #eee;
+}
+
+.online::after{
+  content:"在线";
+  display:inline-block;
+  font-size: 20rpx;
+}
