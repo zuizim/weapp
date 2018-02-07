@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <meta charset="utf-8" />
+  <title>杭州百慧-心电报告提取</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=9" />
+  <meta name="keywords" content="动态心电,动态心电图,百慧医疗" />
+  <meta name="description" content="专业的动态心电分析系统生产厂商,打造世界领先的3导/12导智能分析Holter,联系电话：0571-89811068" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="icon" href="img/beneware.png" />
+  <link rel="stylesheet" href="https://at.alicdn.com/t/font_474306_irx45csptfyldi.css">
+  <!-- 引入样式 -->  
+  <link rel="stylesheet" href="./css/admin.css">
+  <!-- 先引入 Vue -->
+  <script src="./js/vue.min.js"></script>   
+
+</head>
+
+<script type="text/x-template" id="myModal">
+  <div class="mymodal" :class="status">
+    <p class="center">
+      <span v-if="status=='success'"><i class="icon iconfont icon-ok" /></span>
+      <span v-if="status=='error'"><i class="icon iconfont icon-cancel" /></span>
+      <span v-if="status=='loading'"><i class="icon iconfont icon-about" /></span>
+    </p>
+    <p class="center">{{content}}</p>
+  </div>
+</script>
+<script>
+  Vue.component('my-modal',{
+    template: '#myModal',
+    props: ['content', 'status']
+  })
+</script>
+
+<script type="text/x-template" id="login">
+  <div class="form">
+    <form action="">
+      <p class="center">
+        <img src="./img/beneware.png" alt="百慧医疗" />
+      </p>
+      <h3 class="center">百慧医疗-心电报告提取</h3>
+     <div class="input">
+        <span><i class="icon iconfont icon-people"></i></span>
+        <span>|</span>
+        <input type="text" v-model="username" placeholder="账号"/>
+      </div>
+      <div class="input">
+        <span><i class="icon iconfont icon-key"></i></span>
+        <span>|</span>
+        <input type="password" v-model="password" placeholder="密码"/>
+      </div>
+      <div class="input">
+        <span><i class="icon iconfont icon-code"></i></span>
+        <span>|</span>
+        <input type="text" v-model="usercode" placeholder="验证码" @keyup.enter="onLogin"/>
+        <span class="code big" @click="bornCode">
+          {{verifyCode}}
+        </span>
+      </div>
+      <div class="input submit">
+        <button type="button" @click="onLogin">立即登录</button>
+      </div>
+      <div class="reg_tip">
+        <p class="center"><input type="checkbox" v-model="isRemember" id="checkbox"/><label for="checkbox"><span>记住账号和密码</span></label></p>
+      </div>
+      <div class="reg_tip" @click="contactTip='Tel: 0571-89811068, QQ: 270664501'">
+        <p class="center">{{contactTip}}</p>
+      </div>      
+      <div class="tip">
+        <p class="center">{{loginTip}}</p>
+      </div>
+      <p class="stamp center">
+        杭州百慧医疗设备有限公司
+      </p>
+    </form>
+  </div>
+</script>
+
+<script>
+Vue.component('login',{
+  template: '#login',
+  data () {
+    return {
+      username: '',
+      password: '',
+      usercode: '',
+      verifyCode: '',
+      loginTip: '',
+      isRemember: '',
+      contactTip: '没有账号? 忘记密码? 联系我们'
+    }
+  },
+  methods: {
+    encodeFormData(data){
+      if(!data){
+        return "";
+      }
+      var pairs = [];
+      for(var name in data){
+        if(!data.hasOwnProperty(name)){
+          continue;
+        }
+        if(typeof data[name] === 'function'){
+          continue;
+        }
+        var value = data[name].toString();
+        name = encodeURIComponent(name.replace('%20','+'));
+        value = encodeURIComponent(value.replace('%20','+'));
+        pairs.push(name + '=' + value);
+      }
+      return pairs.join('&');
+    },
+    postData (url, data, callback) {
+      var request = new XMLHttpRequest();
+      request.open('POST', url);
+      request.onreadystatechange = function() {
+        if(request.readyState===4 && callback){
+          callback(request);
+        }
+      }
+      request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      request.send(this.encodeFormData(data));
+    },
+    bornCode () {
+      this.verifyCode = Array(4).fill('').map(function(){return String.fromCharCode(Math.floor(26*Math.random())+65)}).join('')
+      this.usercode = '';
+    },
+    encrypt(str){
+      return str.split('').map((val)=>{return val.charCodeAt(0)-50}).join('O'+(Math.random()+'').slice(4,5));
+    },
+    onLogin() {
+      if(this.username && this.password && this.usercode){
+        if (this.usercode.toUpperCase() != this.verifyCode) {
+          this.loginTip = '验证码错误';
+        }else{
+          this.loginTip = '正在登录';
+          if(this.isRemember){
+            this.rememberAccountInfo(this.username, this.password);
+          }else{
+            this.clearAccountInfo();
+          }
+          this.verifyAccount(this.encrypt(this.username.toLowerCase()), this.encrypt(this.password));
+        }
+      }else{
+        this.loginTip = '信息不完整';
+      }
+    },
+    verifyAccount (username, password) {
+      this.postData('./index.php/wechat/login', {username,password}, function(request){            
+        if(request && request.responseText=="1"){
+          this.loginTip = '登录成功';
+          this.rememberLoginStatus();
+          this.$emit('success');          
+        }else{
+          this.loginTip = '登录失败';
+          this.$emit('error');
+        }
+      }.bind(this))
+    },
+    rememberLoginStatus () {
+      sessionStorage.clear();
+      sessionStorage.setItem('benewarex',Math.random());
+    },
+    rememberAccountInfo(username, password){
+      let temp = {
+        u: username, p:password, t: +new Date()
+      }
+      localStorage.setItem('benewareXX', JSON.stringify(temp));
+      localStorage.setItem('isRemember', 1);
+    },
+    clearAccountInfo(){
+      localStorage.setItem('benewareXX', '');
+      localStorage.setItem('isRemember', 0);
+    }
+  },  
+  mounted () {
+    this.bornCode();
+    if(localStorage.getItem('benewareXX')){
+      let temp = JSON.parse(localStorage.getItem('benewareXX'));
+      if(temp && temp['u']){
+        this.username = temp['u'];
+      }
+      if(temp && temp['p']){
+        this.password = temp['p']
+      }
+      if(this.username && this.password){
+        this.usercode = this.verifyCode;
+      }
+    }
+    this.isRemember = localStorage.getItem('isRemember');
+  }
+})
+</script>
+
+<body>
+  <div id="app">
+    <div class="login" v-if="!logined">
+      <login @success="loginSuccess" @error="loginError"/>
+    </div> 
+
+    <div class="logined" v-else>
+      <div class="header">
+        <ul>
+          <li v-for="(column,index) in columns" :key="index" @click="navbarClick(index)" :class="activeIndex==index+1?'active':''">            
+            <a :href="column.path">
+              <i class="icon iconfont" :class="column.icon"></i>
+              <span>{{ column.content }}</span>
+            </a>
+          </li>                     
+        </ul>
+      </div>
+      <div class="main">
+        <div v-if="isModalShow">
+          <my-modal :content="modalContent" :status="modalStatus"></my-modal>
+        </div>        
+        <div class="report" v-if="activeIndex==1">
+          <h1 class="center title">心电报告列表</h1>
+          <p class="tips">说明: 默认显示最新的20条报告。如果要查询特定报告，请在下面进行搜索。</p>
+          <p class="search clearfix">
+            <input type="text" v-model="keyWords" @focus="keyWordsFocus" @blur="keyWordsBlur" @keyup="changeCondition" />
+            <input :type="type1" v-model="fromTime" @focus="type1='date';fromTime=''" @keyup="changeCondition" />
+            <input :type="type2" v-model="toTime" @focus="type2='date';toTime=''" @keyup="changeCondition" />
+            <input type="button" value="搜索" @click="getReportsByCondition" />
+          </p>
+          <div class="list">
+            <p class="clearfix weight">
+              <span class="code">编号</span>
+              <span class="name">病人姓名</span>
+              <span class="date">采集日期</span>
+              <span class="view">查看报告</span>
+            </p>
+            <div v-for="(report,index) in reportLists" :key="index">
+              <span class="code">{{index+1}}</span>
+              <span class="name">{{report.PatientName}}</span>
+              <span class="date">{{report.RecordTime}}</span>
+              <span class="view" >
+                <button @click="checkReport" :data-token="report.ReportToken" data-format="img" title="图片格式的报告">图片 <i class="icon iconfont icon-picture"></i></button>
+                <button @click="checkReport" :data-token="report.ReportToken" data-format="pdf" title="PDF格式的报告">PDF <i class="icon iconfont icon-pdf"></i></button>                
+              </span>
+            </div>
+            <div v-if="reportLists.length==0">
+              <p class="center warning">
+                <i class="icon iconfont icon-about"></i> 暂无报告
+              </p>
+            </div>
+          </div>
+      </div>
+      <div class="report" v-if="activeIndex==2">
+        <h1 class="center title">联系方式</h1>
+        <div class="list">
+          <div v-for="contact in contactLists" :key="contact.type">{{contact.type}}: {{contact.value}}</div>
+        </div>
+      </div>
+    </div>    
+  </div>
+  
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          logined: false,          
+          activeIndex: 1,
+          isModalShow: false,
+          modalContent: '',
+          modalStatus: '',
+          reportLists: [],
+          defaultReportLists:[],          
+          columns: [
+            {content: '报告下载', icon: 'icon-copy', path: '#report'}, 
+            {content: '联系我们', icon: 'icon-youxiang', path: '#contact'},
+            {content: '退出', icon: 'icon-shezhi', path: '#exit'}
+          ],
+          type1: 'text',
+          type2: 'text',
+          keyWords: '病人姓名',
+          fromTime: '从',
+          toTime: '到',
+          from: '',
+          to: '',
+          contactLists: [
+            {type:'联系人',value: '汤征 (技术总监)'},
+            {type:'电话', value:'0571-89811068'},
+            {type:'邮箱', value:'tangzheng00@beneware.net'},
+            {type:'Q Q', value:'19993636'},
+            {type:'微信', value:'19993636'},
+            {type:'官网', value: 'http://www.beneware.cn'},
+            {type:'地址', value: '浙江省杭州市下沙6号大街新加坡科技园2幢901室'}
+          ]
+        }
+      },
+      computed:{
+        
+      },
+      methods: {
+        loginSuccess () {
+          this.logined = true;
+          this.getReports();
+          this.activeIndex = 1;
+        },
+        loginError () {
+          this.logined = false;
+        },
+        checkLoginStatus () {
+          if(!this.logined){
+            this.logined = sessionStorage.getItem('benewarex')?true:false;
+          }
+          if(this.logined){
+            this.getReports();
+          }
+        },
+        encodeFormData(data){
+          if(!data){
+            return "";
+          }
+          var pairs = [];
+          for(var name in data){
+            if(!data.hasOwnProperty(name)){
+              continue;
+            }
+            if(typeof data[name] === 'function'){
+              continue;
+            }
+            var value = data[name].toString();
+            name = encodeURIComponent(name.replace('%20','+'));
+            value = encodeURIComponent(value.replace('%20','+'));
+            pairs.push(name + '=' + value);
+          }
+          return pairs.join('&');
+        },
+        postData (url, data, callback) {
+          var request = new XMLHttpRequest();
+          request.open('POST', url);
+          request.onreadystatechange = function() {
+            if(request.readyState===4 && callback){
+              callback(request);
+            }
+          }
+          request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          request.send(this.encodeFormData(data));
+        },
+        navbarClick(index){
+          this.activeIndex = index+1;
+          switch(index){
+            case 0: this.getReports(); break;
+            case 1: break;
+            default: this.logined = false; sessionStorage.clear();
+          }
+        },
+        showModal(content, status, autoHide){
+          this.isModalShow = true;
+          this.modalContent = content;
+          this.modalStatus = status;
+          if(autoHide){
+            setTimeout(function(){
+              this.isModalShow = false;
+            }.bind(this), 2000)
+          }
+        },
+        hideModal(){
+          this.isModalShow = false;
+        },
+        keyWordsFocus(){
+          if(this.keyWords=='病人姓名'){
+            this.keyWords = '';
+          }
+        },
+        keyWordsBlur(){
+          if(this.keyWords.trim()==''){
+            this.keyWords = '病人姓名';
+          }
+        },
+        
+        /*获取报告*/      
+        getReports () {
+          this.showModal('正在获取报告','loading');
+          this.postData('./index.php/wechat/getReports', {}, function(res){
+            if (res && res.responseText) {              
+              if(res.responseText === 'not logined'){
+                this.showModal('未登录','warning', true);
+                setTimeout(function(){
+                  this.logined = false;
+                }.bind(this),1000);
+              }else{
+                let result = JSON.parse(res.responseText);
+                if(result['code']==0){
+                  this.reportLists = result['reports'];
+                  this.defaultReportLists = result['reports'];
+                  this.hideModal();
+                }
+              }
+            }else{
+              this.reportLists = "";
+              this.showModal('未能获取到报告','warning', true);
+            }
+          }.bind(this))
+        },
+
+        viewReport(url, reportData, format){
+          var reportUrl = url + reportData['linkCode'] + '&formats=' + reportData['formats'].length + '&pages=' + reportData['pages'];    
+          if (format=='img' && reportData && reportData['formats'] && reportData['formats'].length==2) {
+            var reportUrlArr = [];
+            if(reportData['pages'] && reportData['pages']>1){
+              for (var i=1; i<=reportData['pages']; i++) {
+                reportUrlArr.push(url + reportData['linkCode'] + '&formats=' + reportData['formats'].length + '&pages=' + i);
+              }
+            }else{
+              reportUrlArr = [reportUrl];
+              window.open(reportUrlArr[0]);
+            }
+          }else{
+            reportUrl = url + reportData['linkCode'] + '&formats=1' + '&pages=';
+            window.open(reportUrl);
+          }
+          this.hideModal();
+        },
+    
+        checkReport(e){
+          e.preventDefault();
+          e.stopPropagation();
+          this.showModal('正在获取报告','loading');
+          let token = (e.target.tagName=='BUTTON'? e.target:e.target.parentNode).getAttribute('data-token');
+          let format = (e.target.tagName=='BUTTON'? e.target:e.target.parentNode).getAttribute('data-format');
+          if(token){
+            this.postData('./publicWechat/getLinkCodeByToken', {value:token}, function(res){            
+              if(res && res.responseText){
+                let result = JSON.parse(res.responseText);
+                let linkCode = result['linkCode'];
+                if(/^link=[\S]+&name/.test(linkCode)){
+                 this.viewReport("./publicWechat/mirrorReport?", result, format);
+                }else{
+                  this.showModal('报告地址解析错误','loading', true);
+                }              
+              }else{
+                this.showModal('未能获取到报告','warning', true);
+              }           
+            }.bind(this))
+          }
+        },
+
+        /*搜索条件改变: 重置报告列表 + 过滤报告列表*/
+        changeCondition(){
+          if(this.defaultReportLists.length){
+            this.reportLists = this.defaultReportLists.filter((val)=>{
+              return val.PatientName.indexOf(this.keyWords)!=-1;
+            });
+            /*
+            if(this.reportLists.length==0){
+              this.getReportsByCondition();
+            }
+            */
+          }
+        },
+        /*按条件搜索报告*/
+        getReportsByCondition(){
+          if(this.keyWords=="病人姓名" && (this.fromTime=="从" || this.fromTime=="") && (this.toTime=="到"||this.toTime=="")){
+            this.showModal('请设置条件','error', true);
+            return false;
+          }
+          if(this.keyWords==='病人姓名'){
+            this.keyWords = '';
+          }
+          if(this.fromTime==='从'){
+            this.from = '2017-10-10';
+          }else{
+            this.from = this.fromTime;
+          }
+          if(this.toTime==='到' || this.toTime===''){
+            this.to = 'now';
+          }else{
+            this.to = this.toTime;
+          }
+          this.showModal('正在搜索，请稍等', 'loading', false);
+          this.postData('./wechat/getReportsByCondition',{keyWords:this.keyWords, from: this.from, to: this.to}, function(res){
+            console.dir(res);
+            if(res && res.responseText){
+              console.dir(res.responseText);
+              this.reportLists = JSON.parse(res.responseText);
+              this.hideModal();
+            }            
+          }.bind(this))
+        }
+      },      
+
+      mounted () {        
+        this.checkLoginStatus ();        
+      }
+    })
+  </script>
+</body>  
+
+</html>

@@ -1,0 +1,2 @@
+start to insert into databaseUPDATE `reportList` SET `ReportToken` = '604cc3a51c5cb5da96b7073c5ca91678', `RecorderSN` = '4484E170', `DataTypeID` = '2', `RecordTime` = '2017-12-02 01:43:52', `UploadedTime` = '2017-12-01 17:36:17', `PatientName` = '小红123', `PatientGender` = '2', `PatientPhone` = '', `PatientAge` = '50', `Conclusion` = '', `ReportIsPushed` = 1
+WHERE `ReportToken` = '604cc3a51c5cb5da96b7073c5ca91678'
